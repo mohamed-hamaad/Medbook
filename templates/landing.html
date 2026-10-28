@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to MedBook — Next-Gen Healthcare Platform{% endblock %}
+
+{% block content %}
+<div class="max-w-[90%] 2xl:max-w-350 mx-auto space-y-12 pb-16 pt-6">
+
+    <div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center min-h-[65vh] bg-slate-50/30 border border-clinical-border/50 rounded-3xl p-8 md:p-12">
+        <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+            <span class="inline-block text-[11px] font-bold uppercase tracking-widest text-clinical-teal bg-clinical-teal/10 px-4 py-2 rounded-xl border border-clinical-teal/20">
+                ✦ Next-Generation Clinical OS
+            </span>
+            <h1 class="text-4xl md:text-6xl 2xl:text-7xl font-black text-clinical-text tracking-tight leading-none">
+                Your Health, <br class="hidden md:block"><span class="text-clinical-teal">Fully Managed.</span>
+            </h1>
+            <p class="text-xl md:text-base text-slate-500 max-w-2xl leading-relaxed">
+                A premium medical ecosystem engineered to bridge the gap between patients, specialized doctors, and clinical administrators. Experience seamless role-based workflows and real-time independent clinic queues.
+            </p>
+            <div class="flex flex-xl justify-center lg:justify-start items-center gap-4 pt-2">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'dashboard' %}" class="bg-clinical-text hover:bg-clinical-teal text-white text-md font-bold px-8 py-4 rounded-xl transition-all shadow-md">
+                        Go to Dashboard →
+                    </a>
+                {% else %}
+                    <a href="{% url 'signup' %}" class="bg-clinical-text hover:bg-clinical-teal text-white text-md font-bold px-8 py-4 rounded-xl transition-all shadow-md">
+                        Create Patient Account
+                    </a>
+                    <a href="{% url 'login' %}" class="text-slate-500 hover:text-clinical-text text-md font-bold px-5 py-4 transition-colors">
+                        Sign In Portal
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="lg:col-span-5 bg-white border border-clinical-border p-8 rounded-2xl shadow-xs space-y-4 relative overflow-hidden hidden lg:block h-full min-h-75 flex-col justify-center">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-red-400"></span>
+                    <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+                    <span class="w-3 h-3 rounded-full bg-green-400"></span>
+                </div>
+                <span class="text-[10px] font-mono text-slate-400">v2.0.26 // LIVE</span>
+            </div>
+            <div class="space-y-3 justify-center my-auto">
+                <div class="p-4 bg-slate-50 border border-clinical-border rounded-xl flex justify-between items-center">
+                    <div>
+                        <p class="text-xs font-bold text-clinical-text">Dr. Alex Sterling</p>
+                        <p class="text-[10px] text-clinical-teal">Cardiology Clinic</p>
+                    </div>
+                    <span class="text-[10px] font-bold bg-emerald-50 text-emerald-600 px-3 py-1 rounded-md border border-emerald-100">Queue #1</span>
+                </div>
+                <div class="p-4 bg-slate-50 border border-clinical-border rounded-xl flex justify-between items-center opacity-75">
+                    <div>
+                        <p class="text-xs font-bold text-clinical-text">Dr. Sarah Jenkins</p>
+                        <p class="text-[10px] text-clinical-teal">Dental Ward</p>
+                    </div>
+                    <span class="text-[10px] font-bold bg-amber-50 text-amber-600 px-3 py-1 rounded-md border border-amber-100">Pending</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full bg-slate-50 border border-clinical-border/80 rounded-2xl py-6 px-4">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div class="space-y-1 border-r border-slate-200/60 last:border-none">
+                <p class="text-2xl md:text-3xl font-black text-clinical-text">14+</p>
+                <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Medical Wards</p>
+            </div>
+            <div class="space-y-1 border-r border-slate-200/60 last:border-none">
+                <p class="text-2xl md:text-3xl font-black text-clinical-teal">3,200+</p>
+                <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Happy Patients</p>
+            </div>
+            <div class="space-y-1 border-r border-slate-200/60 last:border-none">
+                <p class="text-2xl md:text-3xl font-black text-clinical-text">99.4%</p>
+                <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Success Rate</p>
+            </div>
+            <div class="space-y-1 last:border-none">
+                <p class="text-2xl md:text-3xl font-black text-clinical-text">45+</p>
+                <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Expert Doctors</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full space-y-6 pt-4">
+        <div class="space-y-1">
+            <h2 class="text-2xl md:text-3xl font-black text-clinical-text tracking-tight">Architected for Medical Precision</h2>
+            <p class="text-xs text-slate-400">No clutter. Just high-performance clinical management utilities.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white border border-clinical-border p-6 rounded-2xl shadow-xs space-y-3 hover:border-clinical-teal/40 transition-colors">
+                <div class="w-10 h-10 bg-clinical-teal/10 text-clinical-teal rounded-xl flex items-center justify-center font-bold text-lg">🛡️</div>
+                <h3 class="font-bold text-xl text-clinical-text">Role-Based Gateways</h3>
+                <p class="text-md text-slate-400 leading-relaxed">Secured dashboards isolating administrative operations, practitioner tasks, and patient telemetry seamlessly.</p>
+            </div>
+            <div class="bg-white border border-clinical-border p-6 rounded-2xl shadow-xs space-y-3 hover:border-clinical-teal/40 transition-colors">
+                <div class="w-10 h-10 bg-slate-100 text-clinical-text rounded-xl flex items-center justify-center font-bold text-lg">📊</div>
+                <h3 class="font-bold text-xl text-clinical-text">Isolated Department Queues</h3>
+                <p class="text-md text-slate-400 leading-relaxed">Advanced relational database structures automatically calculating token turns independently per clinic ward daily.</p>
+            </div>
+            <div class="bg-white border border-clinical-border p-6 rounded-2xl shadow-xs space-y-3 hover:border-clinical-teal/40 transition-colors">
+                <div class="w-10 h-10 bg-slate-100 text-clinical-text rounded-xl flex items-center justify-center font-bold text-lg">⚡</div>
+                <h3 class="font-bold text-xl text-clinical-text">Optimized ORM Search</h3>
+                <p class="text-md text-slate-400 leading-relaxed">Accelerated live lookup features with built-in query pre-fetching to prevent latency during intensive database lookups.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full space-y-6 pt-4">
+        <div class="space-y-1">
+            <h2 class="text-2xl font-black text-clinical-text tracking-tight">How the Platform Flows</h2>
+            <p class="text-md text-slate-400">Three streamlined steps to fully coordinate a medical appointment.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 bg-slate-50/50 border border-clinical-border p-8 rounded-2xl">
+            <div class="space-y-2">
+                <div class="text-xs font-black text-clinical-teal font-mono bg-clinical-teal/10 w-7 h-7 rounded-lg flex items-center justify-center">01</div>
+                <h4 class="font-bold text-xl text-clinical-text">Select Ward & Consultant</h4>
+                <p class="text-md text-slate-400 leading-relaxed">Browse active departments, choose your target specialized practitioner, and select your shift parameters.</p>
+            </div>
+            <div class="space-y-2">
+                <div class="text-xs font-black text-slate-500 font-mono bg-slate-100 w-7 h-7 rounded-lg flex items-center justify-center">02</div>
+                <h4 class="font-bold text-xl text-clinical-text">Instant Token Allocation</h4>
+                <p class="text-md text-slate-400 leading-relaxed">The server securely logs your record and instantly computes your localized queue position for that exact clinic.</p>
+            </div>
+            <div class="space-y-2">
+                <div class="text-xs font-black text-slate-500 font-mono bg-slate-100 w-7 h-7 rounded-lg flex items-center justify-center">03</div>
+                <h4 class="font-bold text-xl text-clinical-text">Practitioner Action</h4>
+                <p class="text-md text-slate-400 leading-relaxed">Doctors instantly receive the telemetry on their secure panel, granting them absolute rights to Approve or Conclude the session.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-full pt-4">
+        <div class="bg-clinical-text text-white rounded-2xl p-8 md:p-12 text-center space-y-4 shadow-md relative overflow-hidden">
+            <h3 class="text-2xl md:text-3xl font-black tracking-tight">Ready to Get Started?</h3>
+            <p class="text-md text-slate-300 w-full mx-auto leading-relaxed">Join the MedBook community and unlock the power of efficient and secure medical scheduling.</p>
+            <div class="pt-2">
+                <a href="{% url 'signup' %}" class="inline-block bg-white text-clinical-text hover:bg-clinical-teal hover:text-white text-md font-bold px-8 py-4 rounded-xl transition-all">
+                    Create Your Account
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

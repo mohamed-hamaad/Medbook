@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Create Account — MedBook{% endblock %}
+
+{% block content %}
+<div class="max-w-[90%] 2xl:max-w-350 mx-auto pb-16 pt-6 min-h-[calc(100vh-200px)] flex flex-col">
+    
+    <!-- Breadcrumb -->
+    <div class="mb-6">
+        <span class="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-clinical-teal bg-clinical-teal/10 px-3 py-1.5 rounded-lg border border-clinical-teal/20">
+            <span class="w-1.5 h-1.5 rounded-full bg-clinical-teal animate-pulse"></span>
+            New Patient Registration
+        </span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch grow">
+        
+        <!-- Left: Info Panel -->
+        <div class="hidden lg:flex lg:col-span-5 flex-col justify-between space-y-6">
+            
+            <!-- Top Section -->
+            <div class="space-y-4">
+                <h1 class="text-4xl 2xl:text-5xl font-black text-clinical-text tracking-tight leading-tight">
+                    Join <span class="text-clinical-teal">MedBook</span> Today
+                </h1>
+                <p class="text-base text-slate-500 leading-relaxed">
+                    Create your account to access premium healthcare management. Book appointments, track medical history, and connect with top specialists.
+                </p>
+            </div>
+
+            <!-- Benefits Cards -->
+            <div class="space-y-4">
+                <div class="flex items-center gap-4 bg-white border border-clinical-border p-5 rounded-2xl shadow-xs hover:border-clinical-teal/30 transition-colors">
+                    <div class="w-12 h-12 bg-clinical-teal/10 text-clinical-teal rounded-xl flex items-center justify-center text-lg shrink-0">📅</div>
+                    <div>
+                        <p class="text-sm font-bold text-clinical-text">Instant Booking</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Schedule appointments in 30 seconds</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 bg-white border border-clinical-border p-5 rounded-2xl shadow-xs hover:border-clinical-teal/30 transition-colors">
+                    <div class="w-12 h-12 bg-slate-100 text-clinical-text rounded-xl flex items-center justify-center text-lg shrink-0">📋</div>
+                    <div>
+                        <p class="text-sm font-bold text-clinical-text">Medical History</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Secure digital health records</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 bg-white border border-clinical-border p-5 rounded-2xl shadow-xs hover:border-clinical-teal/30 transition-colors">
+                    <div class="w-12 h-12 bg-slate-100 text-clinical-text rounded-xl flex items-center justify-center text-lg shrink-0">🔔</div>
+                    <div>
+                        <p class="text-sm font-bold text-clinical-text">Smart Reminders</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Never miss an appointment</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Stats -->
+            <div class="grid grid-cols-3 gap-3 bg-slate-50 border border-clinical-border/60 rounded-2xl p-4">
+                <div class="text-center">
+                    <p class="text-xl font-black text-clinical-text">14+</p>
+                    <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Wards</p>
+                </div>
+                <div class="text-center border-x border-slate-200/60">
+                    <p class="text-xl font-black text-clinical-teal">3,200+</p>
+                    <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Patients</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-xl font-black text-clinical-text">45+</p>
+                    <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Doctors</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Signup Form -->
+        <div class="lg:col-span-7 flex flex-col">
+            <div class="bg-white border border-clinical-border rounded-2xl p-6 md:p-8 shadow-xs hover:shadow-md transition-shadow flex flex-col grow">
+                
+                <!-- Mobile Header -->
+                <div class="lg:hidden text-center mb-6">
+                    <h2 class="text-2xl font-black text-clinical-text tracking-tight">Join MedBook</h2>
+                    <p class="text-xs text-slate-500 mt-1">Get access to premium healthcare</p>
+                </div>
+
+                <!-- Desktop Header -->
+                <div class="hidden lg:flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+                    <div>
+                        <h2 class="text-xl font-black text-clinical-text tracking-tight">Create Account</h2>
+                        <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold mt-0.5">Registration Portal</p>
+                    </div>
+                    <span class="w-2 h-2 rounded-full bg-clinical-sage animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"></span>
+                </div>
+
+                <form method="POST" class="space-y-4 flex flex-col grow">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="bg-red-50 border border-red-200 text-red-600 text-xs p-3 rounded-xl flex items-center gap-2">
+                            <span class="text-sm">⚠️</span>
+                            {% for error in form.non_field_errors %}
+                                {{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <!-- Form Fields Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {% for field in form %}
+                            <div class="space-y-1.5 {% if 'password' in field.name or 'username' in field.name or 'email' in field.name %}sm:col-span-2{% endif %}">
+                                <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+                                    {{ field.label }}
+                                </label>
+                                
+                                {% if 'password' in field.name %}
+                                    <div class="password-container relative flex items-center w-full">
+                                        {{ field }}
+                                        <button type="button" class="password-toggle-btn absolute right-3 text-slate-400 hover:text-clinical-teal focus:outline-none transition-colors">
+                                            <img src="{% static 'icons/icons8-eye-50.png' %}" class="eye-icon w-4 h-4 opacity-50 transition-opacity" alt="Toggle Password">
+                                        </button>
+                                    </div>
+                                {% else %}
+                                    {{ field }}
+                                {% endif %}
+                                
+                                {% if field.errors %}
+                                    <div class="bg-red-50/80 border border-red-200/60 rounded-xl p-2.5 text-[11px] text-red-600 font-medium shadow-sm">
+                                        {% for error in field.errors %}
+                                            <p class="flex items-center gap-1">
+                                                <span>•</span> {{ error }}
+                                            </p>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                                {% if field.help_text %}
+                                    <p class="text-[11px] text-slate-400 leading-relaxed bg-slate-50 p-2 rounded-lg border border-slate-100 mt-1">{{ field.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="grow"></div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="w-full bg-clinical-text hover:bg-clinical-teal text-white text-sm font-bold py-4 px-4 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center gap-2 group">
+                        <span>Create Account</span>
+                        <span class="group-hover:translate-x-1 transition-transform">→</span>
+                    </button>
+                </form>
+
+                <!-- Footer -->
+                <div class="mt-6 pt-4 border-t border-slate-100">
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm text-slate-500">
+                            Already have an account? 
+                            <a href="{% url 'login' %}" class="text-clinical-teal font-bold hover:underline ml-1">Sign In</a>
+                        </p>
+                        <span class="text-[10px] text-slate-400 font-mono">v2.0.26</span>
+                    </div>
+                </div>
+
+                <!-- Security Badge -->
+                <div class="mt-4 flex items-center justify-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                    <span class="w-1.5 h-1.5 rounded-full bg-clinical-sage"></span>
+                    HIPAA Compliant & SSL Encrypted
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/main.js' %}"></script>
+{% endblock %}

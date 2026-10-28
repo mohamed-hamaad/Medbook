@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block title %}Clinical OS — Admin Core Dashboard{% endblock %}
+
+{% block content %}
+<div class="w-full my-6 px-8">
+    <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 w-full">
+        <div class="space-y-1">
+            <h1 class="text-2xl font-black text-clinical-text tracking-tight inline-block mr-2">Clinical HQ</h1>
+            <span class="text-xs font-bold text-slate-400 block sm:inline">System Administrator Portal</span>
+        </div>
+        <span class="text-[11px] font-black uppercase tracking-wider text-red-600 bg-red-50 px-2.5 py-1 rounded border border-red-200/50 animate-pulse shrink-0">
+            Root Access
+        </span>
+    </div>
+
+
+    <form method="GET" action="{% url 'dashboard' %}" class="flex gap-2 w-full mt-4 mb-4">
+        <input type="text" name="search" value="{{ search_query|default:'' }}" placeholder="Global core search (Patient, Doctor, or Complaint)..." 
+            class="w-full text-sm px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-clinical-teal focus:bg-white transition-all">
+        <button type="submit" class="bg-clinical-text hover:bg-clinical-teal text-white text-xs font-black uppercase tracking-wider px-6 py-2.5 rounded-lg transition-colors shrink-0">
+            Query
+        </button>
+        {% if search_query %}
+            <a href="{% url 'dashboard' %}" class="bg-slate-100 text-slate-500 hover:bg-slate-200 text-xs font-bold px-4 py-2.5 rounded-lg flex items-center shrink-0 transition-colors">Reset</a>
+        {% endif %}
+    </form>
+
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start w-full">
+
+        <div class="lg:col-span-2 space-y-6">
+            
+            {% for dept in departments %}
+                <div class="bg-white border border-clinical-border/70 rounded-xl p-6 shadow-xs">
+                    <div class="border-b border-slate-100 pb-2 mb-3 flex justify-between items-center text-xs font-bold text-slate-400 uppercase tracking-wide">
+                        <h3 class="font-black text-clinical-text text-base">🏢 {{ dept.name }} Department</h3>
+                        <span class="bg-slate-50 border border-slate-100 px-2 py-0.5 rounded text-slate-500">Doctors Linked: {{ dept.doctors.count }}</span>
+                    </div>
+
+                    <div class="divide-y divide-slate-100">
+                        
+                        {% for doctor in dept.doctors.all %}
+                            {% for appt in doctor.appointments.all %}
+                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 py-3 w-full {% if forloop.first %}pt-1{% endif %}">
+                                    <div class="space-y-1">
+                                        <p class="text-base font-bold text-clinical-text tracking-tight">
+                                            Patient: <span class="text-clinical-teal">@{{ appt.patient.username }}</span> ➡️ Dr. {{ doctor.user.last_name }}
+                                        </p>
+                                        <p class="text-xs text-blue-400 font-semibold"> {{ appt.appointment_date }} @ <span class="text-blue-600">{{ appt.appointment_time }}</span></p>
+                                    </div>
+                                    <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded border shrink-0
+                                        {% if appt.status == 'CONFIRMED' %} bg-emerald-50 text-emerald-600 border-emerald-200/50
+                                        {% elif appt.status == 'PENDING' %} bg-amber-50 text-amber-600 border-amber-200/50
+                                        {% else %} bg-slate-50 text-slate-500 border-slate-200 {% endif %}">
+                                        {{ appt.get_status_display }}
+                                    </span>
+                                </div>
+                            {% empty %}
+                                
+                                {% if search_query %}
+                                    <p class="text-xs text-slate-400 py-2 italic">No active query matches for Dr. {{ doctor.user.last_name }}</p>
+                                {% endif %}
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+            {% empty %}
+                <div class="text-center py-12 bg-white border border-clinical-border/70 rounded-xl text-slate-400 text-sm font-medium w-full italic">
+                    No clinic registries discovered.
+                </div>
+            {% endfor %}
+        </div>
+
+        
+        <div class="bg-white border border-clinical-border/70 rounded-xl p-6 shadow-xs sticky top-6">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2 mb-4">
+                <h3 class="text-xs font-black uppercase tracking-wider text-clinical-text">Core Complaints Feed</h3>
+                <span class="text-xs font-black text-red-600 bg-red-50 px-2 py-0.5 rounded border border-red-100">Unresolved: {{ complaints.count }}</span>
+            </div>
+
+            <div class="space-y-4 max-h-150 overflow-y-auto pr-0.5 w-full">
+                {% for complaint in complaints %}
+                    <div class="border rounded-xl p-4 space-y-2 relative overflow-hidden w-full transition-all bg-slate-50/40
+                        {% if complaint.status == 'NEW' %} border-red-100 bg-red-50/10
+                        {% elif complaint.status == 'INVESTIGATING' %} border-amber-100 bg-amber-50/10
+                        {% else %} border-green-100 bg-green-50/20 {% endif %}">
+                        
+                        <div class="absolute left-0 top-0 bottom-0 w-1.5 
+                            {% if complaint.status == 'NEW' %} bg-red-500
+                            {% elif complaint.status == 'INVESTIGATING' %} bg-amber-500
+                            {% else %} bg-green-500 {% endif %}"></div>
+                        
+                        <div class="flex justify-between items-start w-full pl-1.5">
+                            <div>
+                                <h4 class="text-lg font-black text-clinical-text tracking-tight">{{ complaint.subject }}</h4>
+                                <p class="text-xs text-slate-400 font-bold">From: @{{ complaint.user.username|default:"Anonymous" }}</p>
+                            </div>
+                            <span class="text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded border shrink-0
+                                {% if complaint.status == 'NEW' %} bg-red-50 text-red-600 border-red-200/50
+                                {% elif complaint.status == 'INVESTIGATING' %} bg-amber-50 text-amber-600 border-amber-200/50
+                                {% else %} bg-green-50 text-green-600 border-green-200/50 {% endif %}">
+                                {{ complaint.get_status_display }}
+                            </span>
+                        </div>
+
+                        <p class="text-md text-slate-600 leading-relaxed pl-1.5">
+                            {{ complaint.message }}
+                        </p>
+                    </div>
+                {% empty %}
+                    <div class="text-center py-12 text-slate-400 text-sm italic w-full">
+                        Encryption clean. No infrastructure complaints filed.
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

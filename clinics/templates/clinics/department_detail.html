@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ department.name }} Department — MedBook{% endblock %}
+
+{% block content %}
+<div class="bg-white border border-clinical-border/60 rounded-2xl p-8 md:p-10 shadow-sm space-y-4 mb-10">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="space-y-1">
+            <h1 class="text-3xl font-extrabold text-clinical-text tracking-tight">{{ department.name }} Core</h1>
+            <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Status: <span class="text-clinical-teal">{{ department.development_stage }}</span></p>
+        </div>
+        <a href="{% url 'home' %}" class="text-xs font-bold text-slate-400 hover:text-clinical-text border border-clinical-border px-4 py-2 rounded-xl bg-slate-50 self-start sm:self-auto transition-colors">
+            ← Back to All Fields
+        </a>
+    </div>
+    <p class="text-slate-600 text-sm max-w-3xl leading-relaxed">{{ department.description }}</p>
+</div>
+
+<h2 class="text-xl font-bold text-clinical-text tracking-tight mb-6">Available Consultants</h2>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    {% for doctor in doctors %}
+        <div class="bg-white border border-clinical-border/70 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row gap-5 items-start transition-all hover:shadow-md">
+            
+            <div class="w-16 h-16 rounded-full bg-linear-to-tr from-clinical-teal/20 to-clinical-sage/20 border border-clinical-border flex items-center justify-center shrink-0 overflow-hidden shadow-sm">
+                {% if doctor.profile_picture %}
+                    <img src="{{ doctor.profile_picture.url }}" class="w-full h-full object-cover" alt="Dr. {{ doctor.user.username }}">
+                {% else %}
+                    <img src="{% static 'icons/icons8-profile-50.png' %}" class="w-full h-full object-cover" alt="Default Doctor">
+                {% endif %}
+            </div>
+            
+            <div class="space-y-4 grow w-full">
+                <div class="space-y-1">
+                    <h3 class="text-base font-bold text-clinical-text">
+                        Dr. {{ doctor.user.get_full_name|default:doctor.user.username }}
+                    </h3>
+                    <p class="text-xs text-slate-400 font-medium line-clamp-1">{{ doctor.bio }}</p>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-clinical-border text-xs">
+                    <div>
+                        <p class="text-slate-400 font-medium">Experience</p>
+                        <p class="font-bold text-clinical-text">{{ doctor.experience_years }} Years</p>
+                    </div>
+                    <div>
+                        <p class="text-slate-400 font-medium">Consultation Fee</p>
+                        <p class="font-bold text-clinical-teal">${{ doctor.consultation_fee }}</p>
+                    </div>
+                </div>
+
+                <div class="flex justify-end items-center gap-2 pt-2">
+                    <a href="{% url 'doctor_profile' doctor.id %}" class="border border-clinical-border hover:border-slate-300 text-slate-600 text-xs font-bold px-4 py-2 rounded-xl transition-all">
+                        View Profile
+                    </a>
+                    <a href="{% url 'book_clinic' doctor.id %}" class="bg-clinical-text hover:bg-clinical-teal text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm">
+                        Book Now →
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    {% empty %}
+        <div class="col-span-full text-center py-8 bg-white/60 border border-dashed border-clinical-border rounded-2xl text-slate-400 text-xs">
+            No consultants deployed to this department yet.
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

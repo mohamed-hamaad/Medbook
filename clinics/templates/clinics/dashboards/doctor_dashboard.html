@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Clinical Core — Doctor Dashboard{% endblock %}
+
+{% block content %}
+<div class="w-full my-6 px-8">
+    
+    <div class="border-b border-slate-100 pb-3 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 w-full">
+        <div class="space-y-1">
+            <h1 class="text-2xl font-black text-clinical-text tracking-tight inline-block mr-2">Clinical OS</h1>
+            <span class="text-sm font-bold text-slate-400 block sm:inline">
+                Dr. {{ request.user.get_full_name|default:request.user.username }}
+            </span>
+        </div>
+        <span class="text-xs font-bold uppercase tracking-wider text-clinical-teal bg-clinical-teal/10 px-3 py-1 rounded border border-clinical-teal/20 shrink-0">
+            Active Consultant Portal
+        </span>
+    </div>
+
+    <div class="flex flex-col gap-6 mt-4">
+        
+        <form method="GET" action="{% url 'dashboard' %}" class="flex gap-2 w-full">
+            <input type="text" name="search" value="{{ search_query|default:'' }}" placeholder="Search patient by name or identifier..." 
+                class="w-full text-sm px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-clinical-teal focus:bg-white transition-all">
+            <button type="submit" class="bg-clinical-text hover:bg-clinical-teal text-white text-xs font-black uppercase tracking-wider px-6 py-2.5 rounded-lg transition-colors shrink-0">
+                Search
+            </button>
+            {% if search_query %}
+                <a href="{% url 'dashboard' %}" class="bg-slate-100 text-slate-500 hover:bg-slate-200 text-xs font-bold px-4 py-2.5 rounded-lg flex items-center shrink-0 transition-colors">Reset</a>
+            {% endif %}
+        </form>
+
+        <div class="w-full bg-white border border-clinical-border/70 rounded-xl p-6 shadow-xs">
+            <div class="border-b border-slate-100 pb-2 mb-4 flex justify-between items-center text-xs font-bold text-slate-400 uppercase tracking-wider w-full">
+                <h3 class="text-xl font-black text-clinical-text tracking-tight">Patient Registry & Bookings</h3>
+                <span class="text-sm font-black text-clinical-teal bg-clinical-teal/5 px-2.5 py-0.5 rounded border border-clinical-teal/10">Total: {{ appointments|length }}</span>
+            </div>
+            
+            <div class="divide-y divide-slate-100 w-full">
+                {% for appt in appointments %}
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-4 {% if forloop.first %}pt-0{% endif %} {% if forloop.last %}pb-0{% endif %}">
+                        
+                        <div class="flex flex-wrap items-center gap-3">
+                            <h4 class="font-bold text-clinical-text text-base tracking-tight">
+                                {{ appt.patient.get_full_name|default:appt.patient.username }}
+                            </h4>
+                            <div class="flex items-center gap-2 text-xs text-slate-400 font-semibold">
+                                <span class="bg-slate-50 border border-slate-100 px-2 py-0.5 rounded text-slate-500">{{ appt.appointment_date }}</span>
+                                <span>•</span>
+                                <span class="bg-slate-50 border border-slate-100 px-2 py-0.5 rounded text-slate-500">{{ appt.appointment_time }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-3 w-full sm:w-auto justify-end shrink-0">
+                            
+                            <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded border
+                                {% if appt.status == 'CONFIRMED' %} bg-emerald-50 text-emerald-600 border-emerald-200/50
+                                {% elif appt.status == 'PENDING' %} bg-amber-50 text-amber-600 border-amber-200/50
+                                {% elif appt.status == 'CANCELED' or appt.status == 'CANCELLED' %} bg-red-50 text-red-600 border-red-200/50
+                                {% else %} bg-slate-50 text-slate-500 border-slate-200 {% endif %}">
+                                {{ appt.get_status_display }}
+                            </span>
+                            
+                            <div class="flex items-center gap-1.5">
+                                {% if appt.status == 'PENDING' %}
+                                    <a href="{% url 'confirm_appointment' appt.id %}" class="text-xs font-black uppercase tracking-wider bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-md transition-colors shadow-2xs">
+                                        Accept
+                                    </a>
+                                    <a href="{% url 'cancel_appointment' appt.id %}" class="text-xs font-black uppercase tracking-wider text-red-500 hover:bg-red-50 bg-white border border-red-100 px-4 py-2 rounded-md transition-colors shadow-2xs">
+                                        Decline
+                                    </a>
+                                {% endif %}
+                            </div>
+
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="py-12 text-center text-base font-bold text-slate-400 w-full italic">
+                        No patient consultation files match the current query.
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Confirm Your Appointment — MedBook{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto my-14 bg-white border border-clinical-border/70 rounded-2xl p-10 shadow-sm">
+    
+    <div class="border-b border-slate-100 pb-4 mb-6">
+        <span class="text-[11px] font-black uppercase tracking-wider text-clinical-teal bg-clinical-teal/10 px-3 py-1 rounded-md border border-clinical-teal/20">
+            Step 2: Final Checkout
+        </span>
+        <h1 class="text-2xl font-black text-clinical-text tracking-tight mt-2">Confirm Your Session Details</h1>
+    </div>
+
+    <div class="bg-slate-50 border border-clinical-border rounded-xl p-6 space-y-4 text-sm">
+        <div class="flex justify-between items-center border-b border-slate-200/60 pb-3">
+            <span class="text-slate-400 font-bold uppercase text-xs">Medical Practitioner</span>
+            <span class="text-clinical-text font-black text-base">Dr. {{ doctor.user.get_full_name|default:doctor.user.username }}</span>
+        </div>
+        <div class="flex justify-between items-center border-b border-slate-200/60 pb-3">
+            <span class="text-slate-400 font-bold uppercase text-xs">Selected Date</span>
+            <span class="text-clinical-text font-black bg-white border border-slate-200 px-3 py-1 rounded-lg"> {{ date }}</span>
+        </div>
+        <div class="flex justify-between items-center">
+            <span class="text-slate-400 font-bold uppercase text-xs">Preferred Time Slot</span>
+            <span class="text-clinical-text font-black bg-white border border-slate-200 px-3 py-1 rounded-lg"> {{ time }}</span>
+        </div>
+    </div>
+
+    <form method="POST" action="{% url 'finish_booking' doctor.id %}" class="mt-8 space-y-6">
+        {% csrf_token %}
+        
+        <input type="hidden" name="date" value="{{ date }}">
+        <input type="hidden" name="time" value="{{ time }}">
+
+        <div class="space-y-2">
+            <label class="block text-xs font-black uppercase tracking-wider text-clinical-text">Medical Notes / Symptoms (Optional)</label>
+            <textarea name="patient_notes" rows="4" placeholder="Briefly describe your symptoms or any notes for the doctor..." 
+                class="w-full px-4 py-3.5 bg-slate-50 border border-clinical-border rounded-xl text-base font-semibold focus:outline-none focus:border-clinical-teal focus:ring-2 focus:ring-clinical-teal/10 transition-all leading-relaxed"></textarea>
+        </div>
+
+        <div class="border-t border-slate-100 pt-6 flex flex-col sm:flex-row gap-3">
+            <a href="{% url 'doctor_profile' doctor.id %}" class="w-full sm:w-1/3 text-center border border-clinical-border text-slate-500 font-black uppercase text-xs tracking-wider py-4 rounded-xl hover:bg-slate-50 transition-colors">
+                Go Back
+            </a>
+            <button type="submit" class="w-full sm:w-2/3 bg-clinical-teal hover:bg-clinical-text text-white text-xs font-black uppercase tracking-wider py-4 rounded-xl transition-colors shadow-xs tracking-wide">
+                Confirm & Secure Appointment →
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

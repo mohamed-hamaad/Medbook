@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}404 — Page Not Found{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto my-20 text-center space-y-6">
+    <div class="w-20 h-20 bg-slate-50 border border-clinical-border text-clinical-teal rounded-3xl flex items-center justify-center text-4xl mx-auto shadow-sm tracking-tight animate-pulse">
+        <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+        </svg>
+    </div>
+    
+    <div class="space-y-2">
+        <h1 class="text-4xl font-black text-clinical-text tracking-tight">404 — Not Found Request</h1>
+        <p class="text-sm text-slate-400 max-w-xs mx-auto leading-relaxed">
+            The clinical route or records you are trying to access do not exist or have been relocated.
+        </p>
+    </div>
+
+    <div class="pt-4">
+        <a href="{% url 'home' %}" class="inline-block bg-clinical-text hover:bg-clinical-teal text-white text-xs font-bold px-6 py-3.5 rounded-xl transition-colors shadow-sm">
+            ← Return to home
+        </a>
+    </div>
+</div>
+{% endblock %}

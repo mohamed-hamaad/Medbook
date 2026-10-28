@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Profile: Dr. {{ doctor.user.username }} — MedBook{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto pb-20 pt-8 px-8">
+    
+    {% if form %}
+    <div class="mb-8 p-6 bg-slate-50 border border-clinical-border/80 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-4 shadow-2xs">
+        <div class="text-center sm:text-left space-y-1">
+            <span class="text-[11px] font-black uppercase tracking-wider text-clinical-teal bg-clinical-teal/10 px-3 py-1 rounded-md border border-clinical-teal/20">
+                Doctor Control Panel
+            </span>
+            <p class="text-sm text-slate-500 font-medium">You are viewing your public profile. You can edit your live information inline below.</p>
+        </div>
+        <button id="toggle-edit-btn" onclick="toggleEditMode()" class="w-full text-slate-100 sm:w-auto bg-clinical-text hover:bg-clinical-teal text-xs font-black uppercase tracking-wider px-6 py-3.5 rounded-xl transition-all shadow-xs shrink-0">
+            Edit Profile Settings
+        </button>
+    </div>
+    {% endif %}
+
+    <div id="profile-view-card" class="w-full transition-all duration-300">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start w-full">
+            
+            <div class="bg-white border border-clinical-border/70 rounded-2xl p-6 shadow-xs flex flex-col items-center text-center space-y-5">
+                <div class="w-32 h-32 rounded-2xl bg-slate-50 border border-clinical-border flex items-center justify-center shadow-xs overflow-hidden shrink-0">
+                    {% if doctor.profile_picture %}
+                        <img src="{{ doctor.profile_picture.url }}" class="w-full h-full object-cover" alt="Dr. {{ doctor.user.username }}">
+                    {% else %}
+                        <img src="{% static 'icons/icons8-profile-50.png' %}" class="w-full h-full object-cover p-4 opacity-40" alt="Default Doctor">
+                    {% endif %}
+                </div>
+                
+                <div class="space-y-2 w-full">
+                    <h1 class="text-2xl font-black text-clinical-text tracking-tight">
+                        Dr. {{ doctor.user.get_full_name|default:doctor.user.username }}
+                    </h1>
+                    <span class="inline-block text-xs font-black text-clinical-teal bg-clinical-teal/10 px-3 py-1 rounded-lg border border-clinical-teal/20 uppercase tracking-wide">
+                        {{ doctor.department.name|default:"General" }} Expert
+                    </span>
+                </div>
+
+                <div class="w-full border-t border-slate-100 pt-4 space-y-3 text-sm font-semibold text-slate-500">
+                    <div class="flex justify-between items-center bg-slate-50/50 p-2.5 rounded-lg border border-slate-100">
+                        <span class="text-xs text-slate-400 font-bold uppercase">Phone:</span>
+                        <span>{{ doctor.phone_number|default:"No phone verified" }}</span>
+                    </div>
+                    <div class="flex justify-between items-center bg-slate-50/50 p-2.5 rounded-lg border border-slate-100">
+                        <span class="text-xs text-slate-400 font-bold uppercase">Status:</span>
+                        <span class="flex items-center gap-1.5">
+                            {% if doctor.is_available_today %}
+                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+                                <span class="text-emerald-600 font-black">On-Duty Today</span>
+                            {% else %}
+                                <span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>
+                                <span class="text-amber-600 font-black">Off-Duty</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+
+                {% if request.user != doctor.user %}
+                <div class="w-full bg-clinical-text rounded-xl p-5 text-white space-y-4 shadow-xs text-left">
+                    <div class="space-y-0.5">
+                        <p class="text-sm font-bold">Ready to secure your session?</p>
+                        <p class="text-[11px] text-slate-300">Slots are digitalized and tracked.</p>
+                    </div>
+                    <a href="{% url 'book_clinic' doctor.id %}" class="block w-full text-center bg-clinical-teal hover:bg-clinical-teal/90 text-white text-xs font-black uppercase tracking-wider py-3.5 rounded-xl transition-all shadow-xs">
+                        Proceed to Booking 
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white border border-clinical-border/70 rounded-2xl p-6 md:p-8 shadow-xs space-y-3">
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-400">Professional Biography</h3>
+                    <p class="text-slate-600 text-base leading-relaxed bg-slate-50/50 p-5 rounded-xl border border-clinical-border/40 font-medium">
+                        {{ doctor.bio|default:"No professional biography provided yet." }}
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="bg-white border border-clinical-border/70 p-6 rounded-2xl shadow-xs space-y-1">
+                        <p class="text-xs font-black text-slate-400 uppercase tracking-wider">Clinical Experience</p>
+                        <p class="text-xl font-black text-clinical-text">{{ doctor.experience_years }} Years of Active Practice</p>
+                    </div>
+                    <div class="bg-white border border-clinical-border/70 p-6 rounded-2xl shadow-xs space-y-1">
+                        <p class="text-xs font-black text-slate-400 uppercase tracking-wider">Consultation Rate</p>
+                        <p class="text-xl font-black text-clinical-teal">EGP {{ doctor.consultation_fee }} <span class="text-xs font-medium text-slate-400">per turn</span></p>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-clinical-border/70 p-6 rounded-2xl shadow-xs space-y-4">
+                    <h3 class="text-xs font-black uppercase tracking-wider text-slate-400">Operational Shifts</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-bold text-slate-600">
+                        <div class="bg-slate-50 border border-slate-100 p-3 rounded-xl flex items-center justify-between">
+                            <span class="text-xs text-clinical-text uppercase bg-slate-200/60 px-2 py-1 rounded font-black text-[10px]">Shifts</span>
+                            <span>{{ doctor.available_days }}</span>
+                        </div>
+                        <div class="bg-slate-50 border border-slate-100 p-3 rounded-xl flex items-center justify-between">
+                            <span class="text-xs text-clinical-text uppercase bg-slate-200/60 px-2 py-1 rounded font-black text-[10px]">Hours</span>
+                            <span>{{ doctor.available_time }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    {% if form %}
+    <div id="profile-edit-card" class="hidden w-full bg-white border border-clinical-border rounded-2xl p-6 md:p-8 shadow-xs transition-all duration-300">
+        <form method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-12 gap-8">
+            {% csrf_token %}
+            
+            <div class="md:col-span-4 space-y-5 border-r border-slate-100 pr-0 md:pr-6">
+                <div class="space-y-2">
+                    <label class="block text-xs font-black text-clinical-text uppercase tracking-wider">Profile Picture</label>
+                    <div class="mt-1 flex flex-col items-center p-5 border border-dashed border-slate-200 rounded-xl bg-slate-50">
+                        {% if doctor.profile_picture %}
+                            <img src="{{ doctor.profile_picture.url }}" class="w-20 h-20 rounded-xl object-cover border border-clinical-border mb-3 shadow-2xs">
+                        {% endif %}
+                        <input type="file" name="profile_picture" id="id_profile_picture" class="text-[11px] text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[11px] file:font-black file:bg-clinical-text file:text-white hover:file:bg-clinical-teal file:cursor-pointer w-full transition-all">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-xs font-black text-clinical-text uppercase tracking-wider">Assigned Department</label>
+                    <input type="text" value="{{ doctor.department.name }} Department" disabled class="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-xl text-sm text-slate-400 font-black cursor-not-allowed">
+                </div>
+
+                <div class="p-4 bg-slate-50 border border-clinical-border rounded-xl flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-black text-clinical-text">On-Duty Status</p>
+                        <p class="text-xs text-slate-400 font-semibold">Available for queue turns</p>
+                    </div>
+                    <input type="checkbox" name="is_available_today" id="id_is_available_today" {% if form.is_available_today.value %}checked{% endif %} class="w-5 h-5 accent-clinical-teal cursor-pointer">
+                </div>
+            </div>
+
+            <div class="md:col-span-8 space-y-5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label for="id_phone_number" class="block text-xs font-black text-clinical-text uppercase tracking-wider">Direct Contact Number</label>
+                        <input type="text" name="phone_number" id="id_phone_number" value="{{ form.phone_number.value|default:'' }}" placeholder="+20 1xx xxxx xxx" class="w-full px-4 py-3 bg-slate-50 border border-clinical-border rounded-xl text-sm font-semibold focus:outline-none focus:border-clinical-teal transition-all">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="id_consultation_fee" class="block text-xs font-black text-clinical-text uppercase tracking-wider">Fee (EGP)</label>
+                        <input type="number" step="0.01" name="consultation_fee" id="id_consultation_fee" value="{{ form.consultation_fee.value }}" class="w-full px-4 py-3 bg-slate-50 border border-clinical-border rounded-xl text-sm focus:outline-none focus:border-clinical-teal font-black text-clinical-text">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label for="id_available_days" class="block text-xs font-black text-clinical-text uppercase tracking-wider">Weekly Shifts</label>
+                        <input type="text" name="available_days" id="id_available_days" value="{{ form.available_days.value }}" placeholder="e.g., Sat - Wed" class="w-full px-4 py-3 bg-slate-50 border border-clinical-border rounded-xl text-sm font-semibold focus:outline-none focus:border-clinical-teal transition-all">
+                    </div>
+                    <div class="space-y-2">
+                        <label for="id_available_time" class="block text-xs font-black text-clinical-text uppercase tracking-wider">Shift Hours Range</label>
+                        <input type="text" name="available_time" id="id_available_time" value="{{ form.available_time.value }}" placeholder="e.g., 04:00 PM - 10:00 PM" class="w-full px-4 py-3 bg-slate-50 border border-clinical-border rounded-xl text-sm font-semibold focus:outline-none focus:border-clinical-teal transition-all">
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="id_experience_years" class="block text-xs font-black text-clinical-text uppercase tracking-wider">Years of Verified Practice</label>
+                    <input type="number" name="experience_years" id="id_experience_years" value="{{ form.experience_years.value }}" class="w-full px-4 py-3 bg-slate-50 border border-clinical-border rounded-xl text-sm font-semibold focus:outline-none focus:border-clinical-teal transition-all">
+                </div>
+
+                <div class="space-y-2">
+                    <label for="id_bio" class="block text-xs font-black text-clinical-text uppercase tracking-wider">Practitioner Synopsis & Bio</label>
+                    <textarea name="bio" id="id_bio" rows="5" placeholder="Brief intro..." class="w-full px-4 py-3 bg-slate-50 border border-clinical-border rounded-xl text-sm font-semibold focus:outline-none focus:border-clinical-teal transition-all leading-relaxed">{{ form.bio.value|default:'' }}</textarea>
+                </div>
+
+                <div class="border-t border-slate-100 pt-5 flex justify-end gap-3">
+                    <button type="button" onclick="toggleEditMode()" class="px-5 py-2.5 border border-clinical-border text-slate-500 font-black uppercase text-xs tracking-wider rounded-xl hover:bg-slate-50 transition-colors">Cancel</button>
+                    <button type="submit" class="px-7 py-2.5 bg-clinical-teal hover:bg-clinical-teal/90 text-white font-black uppercase text-xs tracking-wider rounded-xl transition-all shadow-xs">
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+
+</div>
+
+<script>
+function toggleEditMode() {
+    const viewCard = document.getElementById('profile-view-card');
+    const editCard = document.getElementById('profile-edit-card');
+    const toggleBtn = document.getElementById('toggle-edit-btn');
+    
+    if (editCard && viewCard) {
+        if (editCard.style.display === 'none' || editCard.classList.contains('hidden')) {
+            editCard.style.display = 'block';
+            editCard.classList.remove('hidden');
+            viewCard.style.display = 'none';
+            if (toggleBtn) toggleBtn.innerHTML = ' View Public Profile';
+        } else {
+            editCard.style.display = 'none';
+            editCard.classList.add('hidden');
+            viewCard.style.display = 'block';
+            if (toggleBtn) toggleBtn.innerHTML = ' Edit Profile Settings';
+        }
+    }
+}
+</script>
+{% endblock %}

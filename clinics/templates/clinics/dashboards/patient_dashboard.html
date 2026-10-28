@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Patient Portal — My Appointments{% endblock %}
+
+{% block content %}
+<div class="w-full my-6 px-8">
+    
+    <div class="border-b border-slate-100 pb-3 flex justify-between items-end w-full">
+        <div class="space-y-1">
+            <h1 class="text-2xl font-black text-clinical-text tracking-tight">Medical Portal</h1>
+            <p class="text-xs text-slate-400 font-semibold">Welcome back, <span class="text-clinical-text font-bold">{{ request.user.username }}</span>. Tracking live health schedules.</p>
+        </div>
+        <span class="text-[11px] font-bold uppercase tracking-wider text-clinical-teal bg-clinical-teal/10 px-2.5 py-1 rounded border border-clinical-teal/20">
+            Patient Hub
+        </span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start w-full mt-6">
+        
+        <div class="lg:col-span-2 space-y-6">
+            
+            <div class="bg-white border border-clinical-border/70 rounded-xl p-6 shadow-xs">
+                <div class="border-b border-slate-100 pb-2 mb-4 flex justify-between items-center text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <h3>My Booked Sessions</h3>
+                    <span>Total: {{ appointments|length }}</span>
+                </div>
+                
+                <div class="divide-y divide-slate-100 w-full">
+                    {% for appt in appointments %}
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-4 {% if forloop.first %}pt-0{% endif %} {% if forloop.last %}pb-0{% endif %} w-full">
+                            
+                            <div class="space-y-1">
+                                <h4 class="font-bold text-clinical-text text-base tracking-tight">
+                                    Dr. {{ appt.doctor.user.get_full_name|default:appt.doctor.user.username }}
+                                </h4>
+                                <div class="flex flex-wrap items-center gap-2 text-xs font-semibold">
+                                    <span class="text-clinical-teal bg-clinical-teal/5 px-2 py-0.5 rounded border border-clinical-teal/10">{{ appt.doctor.department.name }} Clinic</span>
+                                    <span class="text-slate-300">|</span>
+                                    <span class="text-slate-400"> {{ appt.appointment_date }} at <span class="text-slate-600">{{ appt.appointment_time }}</span></span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-2 w-full sm:w-auto justify-end shrink-0">
+                                <span class="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded border
+                                    {% if appt.status == 'CONFIRMED' or appt.status == 'APPROVED' %} bg-emerald-50 text-emerald-600 border-emerald-200/50
+                                    {% elif appt.status == 'PENDING' %} bg-amber-50 text-amber-600 border-amber-200/50
+                                    {% else %} bg-slate-50 text-slate-500 border-slate-200 {% endif %}">
+                                    {{ appt.get_status_display }}
+                                </span>
+
+                                {% if appt.status == 'PENDING'%}
+                                    <a href="{% url 'cancel_appointment' appt.id %}" class="text-xs font-bold text-red-500 hover:bg-red-50 bg-white border border-red-100 px-3 py-1.5 rounded-md transition-colors">
+                                        Cancel
+                                    </a>
+                                {% endif %}
+                            </div>
+
+                        </div>
+                    {% empty %}
+                        <div class="text-center py-10 text-slate-400 text-sm font-medium w-full">
+                            You haven't booked any consultations yet. <a href="{% url 'home' %}" class="text-clinical-teal font-bold underline ml-1">Browse clinics</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="bg-white border border-clinical-border/70 rounded-xl p-6 shadow-xs">
+                <div class="border-b border-slate-100 pb-2 mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-clinical-text">
+                    <span>File an Official Complaint / Inquiry</span>
+                </div>
+
+                <form method="POST" action="{% url 'dashboard' %}" class="space-y-4 w-full">
+                    {% csrf_token %}
+                    <input type="hidden" name="submit_complaint" value="1">
+
+                    <div class="w-full">
+                        <label class="block text-[11px] font-black uppercase tracking-wider text-slate-400 mb-1.5">Subject / Issue Title</label>
+                        <input type="text" name="subject" required placeholder="e.g., Delay in Clinic Appointment Session..." 
+                            class="w-full text-sm px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-red-400 focus:bg-white transition-all">
+                    </div>
+
+                    <div class="w-full">
+                        <label class="block text-[11px] font-black uppercase tracking-wider text-slate-400 mb-1.5">Detailed Message</label>
+                        <textarea name="message" required rows="4" placeholder="Please describe exactly what happened with dates or doctor names..." 
+                            class="w-full text-sm px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-red-400 focus:bg-white transition-all resize-none"></textarea>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit" class="text-slate-100 bg-slate-900 hover:bg-red-600 text-xs font-black uppercase tracking-wider px-6 py-2.5 rounded-lg transition-colors shadow-xs">
+                            Submit Complaint
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+        <div class="bg-white border border-clinical-border/70 rounded-xl p-6 shadow-xs sticky top-6">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2 mb-4">
+                <h3 class="text-xs font-bold uppercase tracking-wider text-clinical-text">Live Updates</h3>
+                <span class="relative flex h-2.5 w-2.5">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+            </div>
+
+            <div class="space-y-3 max-h-125 overflow-y-auto pr-0.5 w-full">
+                {% for appt in appointments %}
+                    {% if appt.status == 'CONFIRMED' %}
+                        <div class="bg-emerald-50/50 border border-emerald-100/70 rounded-lg p-3 space-y-1 relative overflow-hidden w-full">
+                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500"></div>
+                            <div class="flex justify-between items-center w-full">
+                                <p class="text-xs font-bold text-emerald-800">Session Confirmed</p>
+                                <span class="text-[10px] font-bold text-emerald-600 bg-emerald-100/50 px-1.5 rounded">Approved</span>
+                            </div>
+                            <p class="text-xs text-emerald-700 leading-relaxed">
+                                Dr. <span class="font-bold">{{ appt.doctor.user.last_name|default:appt.doctor.user.username }}</span> has approved your slot for <span class="font-semibold">{{ appt.appointment_date }}</span>.
+                            </p>
+                        </div>
+                    {% elif appt.status == 'CANCELED' or appt.status == 'CANCELLED' %}
+                        <div class="bg-red-50/50 border border-red-100/70 rounded-lg p-3 space-y-1 relative overflow-hidden w-full">
+                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-red-500"></div>
+                            <div class="flex justify-between items-center w-full">
+                                <p class="text-xs font-bold text-red-800">Session Cancelled</p>
+                                <span class="text-[10px] font-bold text-red-600 bg-red-100/50 px-1.5 rounded">Dropped</span>
+                            </div>
+                            <p class="text-xs text-red-700 leading-relaxed">
+                                Your slot on <span class="font-semibold">{{ appt.appointment_date }}</span> was successfully un-booked.
+                            </p>
+                        </div>
+                    {% endif %}
+                {% empty %}
+                    <div class="text-center py-8 text-slate-400 text-xs italic">
+                        No telemetry alerts streaming.
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

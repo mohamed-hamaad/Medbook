@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %} 
+
+{% block title %}Sign In — MedBook{% endblock %}
+
+{% block content %}
+<div class="max-w-[90%] 2xl:max-w-350 mx-auto pb-16 pt-6 min-h-[calc(100vh-200px)] flex flex-col">
+    <div class="mb-6">
+        <span class="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-clinical-teal bg-clinical-teal/10 px-3 py-1.5 rounded-lg border border-clinical-teal/20">
+            <span class="w-1.5 h-1.5 rounded-full bg-clinical-teal animate-pulse"></span>
+            Secure Authentication Portal
+        </span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch grow">
+        
+        <!-- Left Info Panel -->
+        <div class="hidden lg:flex lg:col-span-6 flex-col justify-between space-y-6">
+            
+            <!-- Top Section -->
+            <div class="space-y-4">
+                <h1 class="text-4xl 2xl:text-5xl font-black text-clinical-text tracking-tight leading-tight">
+                    Welcome Back to <br><span class="text-clinical-teal">MedBook</span>
+                </h1>
+                <p class="text-base text-slate-500 leading-relaxed max-w-lg">
+                    Access your personalized clinical dashboard. Manage appointments, view medical records, and connect with your healthcare team securely.
+                </p>
+            </div>
+
+            <!-- Feature Cards (Bigger) -->
+            <div class="space-y-4">
+                <div class="flex items-center gap-4 bg-white border border-clinical-border p-5 rounded-2xl shadow-xs hover:border-clinical-teal/30 transition-colors">
+                    <div class="w-12 h-12 bg-clinical-teal/10 text-clinical-teal rounded-xl flex items-center justify-center text-lg shrink-0">🔒</div>
+                    <div>
+                        <p class="text-sm font-bold text-clinical-text">End-to-End Encryption</p>
+                        <p class="text-xs text-slate-400 mt-0.5">HIPAA Compliant Security Protocols</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 bg-white border border-clinical-border p-5 rounded-2xl shadow-xs hover:border-clinical-teal/30 transition-colors">
+                    <div class="w-12 h-12 bg-slate-100 text-clinical-text rounded-xl flex items-center justify-center text-lg shrink-0">⚡</div>
+                    <div>
+                        <p class="text-sm font-bold text-clinical-text">Real-Time Sync</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Instant appointment & queue updates</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 bg-white border border-clinical-border p-5 rounded-2xl shadow-xs hover:border-clinical-teal/30 transition-colors">
+                    <div class="w-12 h-12 bg-slate-100 text-clinical-text rounded-xl flex items-center justify-center text-lg shrink-0">👤</div>
+                    <div>
+                        <p class="text-sm font-bold text-clinical-text">Role-Based Access</p>
+                        <p class="text-xs text-slate-400 mt-0.5">Patient, Doctor, or Admin Console</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Stats -->
+            <div class="grid grid-cols-3 gap-3 bg-slate-50 border border-clinical-border/60 rounded-2xl p-4">
+                <div class="text-center">
+                    <p class="text-xl font-black text-clinical-text">14+</p>
+                    <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Wards</p>
+                </div>
+                <div class="text-center border-x border-slate-200/60">
+                    <p class="text-xl font-black text-clinical-teal">3,200+</p>
+                    <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Patients</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-xl font-black text-clinical-text">99.4%</p>
+                    <p class="text-[10px] uppercase tracking-wider font-bold text-slate-400">Uptime</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Login Form -->
+        <div class="lg:col-span-6 flex flex-col">
+            <div class="bg-white border border-clinical-border rounded-2xl p-6 md:p-8 shadow-xs hover:shadow-md transition-shadow flex flex-col grow">
+                
+                <!-- Mobile Header -->
+                <div class="lg:hidden text-center mb-6">
+                    <h2 class="text-2xl font-black text-clinical-text tracking-tight">Welcome Back</h2>
+                    <p class="text-xs text-slate-500 mt-1">Access your clinical dashboard</p>
+                </div>
+
+                <!-- Desktop Header -->
+                <div class="hidden lg:flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+                    <div>
+                        <h2 class="text-xl font-black text-clinical-text tracking-tight">Sign In</h2>
+                        <p class="text-[10px] text-slate-400 uppercase tracking-wider font-bold mt-0.5">Authentication Required</p>
+                    </div>
+                    <span class="w-2 h-2 rounded-full bg-clinical-sage animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]"></span>
+                </div>
+
+                <form method="POST" class="space-y-4 flex flex-col grow">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="bg-red-50 border border-red-200 text-red-600 text-xs p-3 rounded-xl flex items-center gap-2">
+                            <span class="text-sm">⚠️</span>
+                            {{ form.non_field_errors.0 }}
+                        </div>
+                    {% endif %}
+
+                    {% for field in form %}
+                        <div class="space-y-1.5">
+                            <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+                                {{ field.label }}
+                            </label>
+                            
+                            {% if 'password' in field.name %}
+                                <div class="password-container relative flex items-center">
+                                    {{ field }}
+                                    <button type="button" class="password-toggle-btn absolute right-3 text-slate-400 hover:text-clinical-teal focus:outline-none transition-colors">
+                                        <img src="{% static 'icons/icons8-eye-50.png' %}" class="eye-icon w-4 h-4 opacity-50 transition-opacity" alt="Toggle Password">
+                                    </button>
+                                </div>
+                            {% else %}
+                                {{ field }}
+                            {% endif %}
+
+                            {% if field.errors %}
+                                <p class="text-[11px] font-medium text-red-500 flex items-center gap-1">
+                                    <span>•</span> {{ field.errors.0 }}
+                                </p>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <div class="flex items-center justify-between pt-1">
+                        <a href="#" class="text-sm text-clinical-teal font-bold hover:underline">Forgot password?</a>
+                    </div>
+
+                    <div class="grow"></div>
+
+                    <button type="submit" class="w-full bg-clinical-text hover:bg-clinical-teal text-white text-sm font-bold py-4 px-4 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md flex items-center justify-center gap-2 group">
+                        <span>Sign In to Dashboard</span>
+                        <span class="group-hover:translate-x-1 transition-transform">→</span>
+                    </button>
+                </form>
+
+                <div class="mt-6 pt-4 border-t border-slate-100">
+                    <div class="flex items-center justify-between">
+                        <p class="text-sm text-slate-500">
+                            New to MedBook? 
+                            <a href="{% url 'signup' %}" class="text-clinical-teal font-bold hover:underline ml-1">Create Account</a>
+                        </p>
+                        <span class="text-[10px] text-slate-400 font-mono">v2.0.26</span>
+                    </div>
+                </div>
+
+                <!-- Security Badge -->
+                <div class="mt-4 flex items-center justify-center gap-2 text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                    <span class="w-1.5 h-1.5 rounded-full bg-clinical-sage"></span>
+                    SSL Encrypted Connection
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'js/main.js' %}"></script>
+{% endblock %}

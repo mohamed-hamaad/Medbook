@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Book Appointment — Dr. {{ doctor.user.last_name }}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto my-14 bg-white border border-clinical-border/70 rounded-2xl p-10 shadow-sm">
+    
+    <div class="flex items-center gap-5 pb-6 border-b border-slate-100">
+        <div class="w-20 h-20 rounded-full bg-clinical-teal/10 flex items-center justify-center text-3xl overflow-hidden shrink-0 border border-slate-100">
+            {% if doctor.profile_picture %}
+                <img src="{{ doctor.profile_picture.url }}" class="w-full h-full object-cover" alt="Dr. {{ doctor.user.username }}">
+            {% else %}
+                <img src="{% static 'icons/icons8-profile-50.png' %}" class="w-full h-full object-cover" alt="Default Doctor">
+            {% endif %}
+        </div>
+        <div class="space-y-1">
+            <h1 class="text-2xl font-black text-clinical-text tracking-tight">Book with Dr. {{ doctor.user.get_full_name|default:doctor.user.username }}</h1>
+            <p class="text-sm text-clinical-teal font-black uppercase tracking-wider">{{ doctor.department.name }} Department</p>
+        </div>
+    </div>
+
+    <div class="mt-6 bg-slate-50 border border-clinical-border rounded-xl p-5 flex flex-col sm:flex-row justify-between gap-4 text-sm text-slate-500 font-semibold">
+        <div><span class="text-clinical-text font-black">Available Days:</span> <span class="bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-600">{{ doctor.available_days }}</span></div>
+        <div><span class="text-clinical-text font-black">Working Hours:</span> <span class="bg-white border border-slate-200 px-2 py-0.5 rounded text-slate-600">{{ doctor.available_time }}</span></div>
+    </div>
+
+    <form method="GET" action="{% url 'finish_booking' doctor.id %}" class="mt-8 space-y-6">
+        
+        <div class="space-y-2">
+            <label class="block text-xs font-black uppercase tracking-wider text-clinical-text">Select Appointment Date</label>
+            <input type="date" name="date" id="appointment-date" required 
+                class="w-full px-4 py-3.5 bg-slate-50 border border-clinical-border rounded-xl text-base focus:outline-none focus:border-clinical-teal focus:ring-2 focus:ring-clinical-teal/10 transition-all">
+        </div>
+
+        <div class="space-y-2">
+            <label class="block text-xs font-black uppercase tracking-wider text-clinical-text">Preferred Time</label>
+            <input type="time" name="time" required placeholder="e.g., 04:30 PM"
+                class="w-full px-4 py-3.5 bg-slate-50 border border-clinical-border rounded-xl text-base focus:outline-none focus:border-clinical-teal focus:ring-2 focus:ring-clinical-teal/10 transition-all">
+        </div>
+
+        <button type="submit" class="w-full bg-clinical-teal hover:bg-clinical-text text-white text-xs font-black uppercase tracking-wider py-4 rounded-xl transition-colors shadow-xs mt-6 tracking-wide">
+            Proceed to Checkout →
+        </button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const dateInput = document.getElementById('appointment-date');
+        if (dateInput) {
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.min = today;
+        }
+    });
+</script>
+{% endblock %}
